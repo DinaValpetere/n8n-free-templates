@@ -1,0 +1,1369 @@
+{
+  "name": "House Build Shorts - Veo 3 to YouTube, Facebook, Instagram, TikTok",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## House build Shorts (Veo 3)\nEvery 12h: takes the next **Pending** row from Google Sheets, writes an 8-scene script, generates 8 vertical Veo 3 clips (8s each, with native construction sound), stitches them into one **60s** 9:16 video with Creatomate (each clip trimmed to 7.5s), then posts to YouTube Shorts, Facebook, Instagram Reels and TikTok.\n\n**Before running:** fill in the **Config** node and pick your Sheet + Drive folder + credentials on each node.",
+        "height": 300,
+        "width": 660
+      },
+      "id": "de2f1488-7b1f-48c3-b829-77882d6aef6a",
+      "name": "Note: Overview",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -260,
+        -560
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## 1. Topic + script\nGemini writes 8 consistent scene prompts (same house, same camera angle).",
+        "height": 560,
+        "width": 1080,
+        "color": 4
+      },
+      "id": "1458265a-3c2d-4fe0-ba27-bd577515b634",
+      "name": "Note: Script",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        180,
+        -200
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## 2. Generate 8 Veo 3 clips\nOne clip per loop pass. Each clip is saved to a public Drive folder so Creatomate can read it.",
+        "height": 560,
+        "width": 780,
+        "color": 5
+      },
+      "id": "d982a639-86e7-4dd7-b32b-9beb6b9c7aaf",
+      "name": "Note: Clips",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1320,
+        -200
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## 3. Stitch to 60s (Creatomate)\nPolls every 60s until the render succeeds.",
+        "height": 560,
+        "width": 1100,
+        "color": 6
+      },
+      "id": "2abacf47-3f33-4ab9-8fc8-0a3e4539b4ee",
+      "name": "Note: Stitch",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        2160,
+        -200
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## 4. Publish\nYouTube + Facebook upload the file. Instagram pulls the public render URL. TikTok uses the Content Posting API (FILE_UPLOAD).",
+        "height": 1180,
+        "width": 1500,
+        "color": 3
+      },
+      "id": "2b343972-b06b-4d1f-b0a2-c51e4857728d",
+      "name": "Note: Publish",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        3320,
+        -420
+      ]
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "hours",
+              "hoursInterval": 12
+            }
+          ]
+        }
+      },
+      "id": "b4f8c0c4-865a-4373-b521-0b000ba24db9",
+      "name": "Schedule Trigger",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -200,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "",
+          "mode": "list"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "",
+          "mode": "list"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "Status",
+              "lookupValue": "Pending"
+            }
+          ]
+        },
+        "options": {
+          "returnFirstMatch": true
+        }
+      },
+      "id": "39bcff01-602e-48b0-b1ae-c81c11359b9c",
+      "name": "Get Pending Topic",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        20,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "302b9222-1270-48fc-8de6-c72c22411947",
+              "name": "fb_page_id",
+              "value": "YOUR_FACEBOOK_PAGE_ID",
+              "type": "string"
+            },
+            {
+              "id": "545058ac-4199-4c25-813f-565137e9c986",
+              "name": "ig_user_id",
+              "value": "YOUR_INSTAGRAM_BUSINESS_ACCOUNT_ID",
+              "type": "string"
+            },
+            {
+              "id": "d78f981e-7f63-4f06-8145-1489023dbe55",
+              "name": "tiktok_privacy_level",
+              "value": "SELF_ONLY",
+              "type": "string"
+            },
+            {
+              "id": "31f1164d-80e2-42ac-8d0e-e3f95f962bb1",
+              "name": "scene_count",
+              "value": 8,
+              "type": "number"
+            },
+            {
+              "id": "51cefeb0-ffed-4bed-ae1f-bad3bffbb298",
+              "name": "clip_seconds",
+              "value": 7.5,
+              "type": "number"
+            },
+            {
+              "id": "e6e14f2a-ffe1-4b61-b600-eb2347cf8fef",
+              "name": "youtube_privacy",
+              "value": "public",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "id": "f9128f98-aa9f-449a-bf67-0a262b9529cf",
+      "name": "Config",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        240,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "folder",
+        "name": "={{ $json.Topic }} - {{ $now.toFormat('yyyy-MM-dd HH-mm') }}",
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "root",
+          "cachedResultName": "/ (Root folder)"
+        },
+        "options": {}
+      },
+      "id": "e9ce0565-1b36-481f-96e5-8371cdf2bc5b",
+      "name": "Create Drive Folder",
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        460,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "folder",
+        "operation": "share",
+        "folderNoRootId": {
+          "__rl": true,
+          "value": "={{ $json.id }}",
+          "mode": "id"
+        },
+        "permissionsUi": {
+          "permissionsValues": {
+            "role": "reader",
+            "type": "anyone"
+          }
+        },
+        "options": {}
+      },
+      "id": "bd3394f3-760e-4a7f-b2ab-154dd8d2f820",
+      "name": "Make Folder Public",
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        680,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=You create viral 60-second YouTube Shorts / Reels / TikToks for a channel about building a house from scratch.\n\nVideo topic: {{ $('Config').first().json.Topic }}\n\nThe video shows ONE house being built from an empty plot to the finished home, as a construction timelapse. It is made of exactly {{ $('Config').first().json.scene_count }} scenes. Each scene is a separate 8-second clip generated by Google Veo 3 from a text prompt only, so every prompt must stand on its own.\n\nUse these stages in order (merge or adapt to the topic if needed):\n1. Empty plot, surveying and excavation\n2. Foundation: rebar and concrete pour\n3. Walls / framing going up\n4. Roof structure and roofing\n5. Windows, doors and exterior cladding\n6. Interior: plumbing, electrics, drywall, flooring\n7. Landscaping, driveway and final details\n8. Final reveal of the finished house at golden hour\n\nCONSISTENCY RULES (very important, Veo has no memory between clips):\n- First write a detailed `house_design` (style, size, floors, materials, colours, roof type, window layout, plot, surroundings).\n- Repeat the key parts of that house_design word for word in EVERY veo_prompt.\n- Use the same camera in every exterior scene: a fixed, locked-off wide shot from the same corner of the plot, vertical 9:16 framing, the whole house in frame. Interior scene: a fixed wide shot of the same main room.\n- Describe fast timelapse motion (workers and machines moving quickly, sun and shadows sweeping).\n- Describe the sound: realistic construction ambience (excavator engine, hammering, saws, concrete mixer), no music, no dialogue, no voiceover.\n- No on-screen text, captions, logos or watermarks.\n- Each veo_prompt is 60 to 120 words.\n\nAlso write:\n- `title`: catchy, under 90 characters, ends with #Shorts\n- `description`: 2 to 3 sentences that hook the viewer and ask them to comment\n- `hashtags`: 5 to 8 hashtags in one string, e.g. #housebuilding #construction #timelapse\n- `stage` for each scene: a 2 to 4 word label shown on screen, e.g. \"Pouring the foundation\"",
+        "hasOutputParser": true
+      },
+      "id": "011d9847-36b2-4501-8d0e-145bb3015e1f",
+      "name": "Write Video Script",
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.5,
+      "position": [
+        900,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.5-flash",
+        "options": {
+          "temperature": 0.7
+        }
+      },
+      "id": "91e05028-812e-4655-a422-45d9dba1eeac",
+      "name": "Google Gemini Chat Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        880,
+        200
+      ]
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n  \"title\": \"We built this house from an empty field in 60 seconds #Shorts\",\n  \"description\": \"From bare dirt to dream home. Which stage would you skip? Tell us in the comments!\",\n  \"hashtags\": \"#housebuilding #construction #timelapse #dreamhome #diy #shorts\",\n  \"house_design\": \"A two-storey modern farmhouse, white board-and-batten siding, black metal gable roof, large black-framed windows, wooden front porch, on a flat green plot with oak trees behind\",\n  \"scenes\": [\n    {\n      \"stage\": \"Clearing the plot\",\n      \"veo_prompt\": \"Vertical 9:16 fast construction timelapse, fixed locked-off wide shot from the south-east corner of a flat green plot with oak trees behind. Surveyors place stakes and string lines, a yellow excavator digs the foundation trench, dirt piles grow, sun and shadows sweep quickly across the ground. This is the site of a two-storey modern farmhouse with white board-and-batten siding and a black metal gable roof. Sound: excavator engine, beeping reverse alarms, shovels in soil. No music, no dialogue, no text.\"\n    },\n    {\n      \"stage\": \"Pouring the foundation\",\n      \"veo_prompt\": \"Vertical 9:16 fast construction timelapse, same fixed wide shot from the south-east corner of the flat green plot with oak trees behind. Workers tie rebar in the trench, a concrete mixer truck pours grey concrete, workers smooth the slab, it cures and dries lighter in colour. Foundation for a two-storey modern farmhouse with white board-and-batten siding and a black metal gable roof. Sound: concrete mixer drum, pump hum, trowels scraping. No music, no dialogue, no text.\"\n    }\n  ]\n}"
+      },
+      "id": "989fd577-42c2-4caf-a9d9-54dc9b5d62f1",
+      "name": "Structured Output Parser",
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.2,
+      "position": [
+        1120,
+        200
+      ]
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "output.scenes",
+        "options": {}
+      },
+      "id": "47cd3605-a59c-498f-ae34-eec4e3849571",
+      "name": "Split Out Scenes",
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        1200,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "7bcac721-e6a3-4dd6-8b7e-460694e8c6aa",
+      "name": "Loop Over Scenes",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        1400,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "video",
+        "operation": "generate",
+        "modelId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "models/veo-3.0-generate-001"
+        },
+        "prompt": "={{ $json.veo_prompt }}",
+        "returnAs": "video",
+        "options": {
+          "sampleCount": 1,
+          "durationSeconds": 8,
+          "aspectRatio": "9:16",
+          "personGeneration": "allow_all",
+          "binaryPropertyOutput": "data"
+        }
+      },
+      "id": "cbacf354-cfab-4685-90fa-aa86ea0f33e3",
+      "name": "Generate Clip (Veo 3)",
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1,
+      "position": [
+        1640,
+        180
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 5000
+    },
+    {
+      "parameters": {
+        "inputDataFieldName": "data",
+        "name": "=scene-{{ String($runIndex + 1).padStart(2, '0') }}.mp4",
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "={{ $('Create Drive Folder').first().json.id }}",
+          "mode": "id"
+        },
+        "options": {}
+      },
+      "id": "aad4a8d8-ed41-4fee-92c0-caf55e4172ff",
+      "name": "Upload Clip to Drive",
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        1880,
+        180
+      ]
+    },
+    {
+      "parameters": {
+        "fieldsToAggregate": {
+          "fieldToAggregate": [
+            {
+              "fieldToAggregate": "id",
+              "renameField": true,
+              "outputFieldName": "clip_ids"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "ad41b27c-95fa-439c-9c78-f4c51aa311c2",
+      "name": "Collect Clip IDs",
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        1640,
+        -120
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Builds a Creatomate RenderScript: all clips play one after another on track 1.\n// 8 clips x 7.5s = 60s. Veo 3's own audio is kept.\nconst cfg = $('Config').first().json;\nconst clipSeconds = Number(cfg.clip_seconds) || 7.5;\nconst clipIds = $input.first().json.clip_ids;\nconst scenes = $('Split Out Scenes').all().map((i) => i.json);\n\nconst elements = clipIds.map((id, idx) => ({\n  type: 'composition',\n  track: 1,\n  duration: clipSeconds,\n  elements: [\n    {\n      type: 'video',\n      source: `https://drive.google.com/uc?export=download&id=${id}`,\n      duration: clipSeconds,\n      fit: 'cover',\n    },\n    {\n      type: 'text',\n      text: scenes[idx]?.stage ?? '',\n      y: '14%',\n      width: '90%',\n      x_alignment: '50%',\n      y_alignment: '50%',\n      font_family: 'Montserrat',\n      font_weight: '800',\n      font_size: '6 vmin',\n      fill_color: '#ffffff',\n      stroke_color: '#000000',\n      stroke_width: '1.2 vmin',\n    },\n  ],\n}));\n\nreturn [{\n  json: {\n    source: {\n      output_format: 'mp4',\n      width: 1080,\n      height: 1920,\n      frame_rate: 30,\n      elements,\n    },\n  },\n}];\n"
+      },
+      "id": "3f939fb1-2bc4-42d9-86ec-65db573b0141",
+      "name": "Build 60s Timeline",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1860,
+        -120
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.creatomate.com/v1/renders",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ source: $json.source }) }}",
+        "options": {}
+      },
+      "id": "d4d7ae06-14f8-49c6-8c29-f1b1c65f841a",
+      "name": "Render Video (Creatomate)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2220,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "amount": 60
+      },
+      "id": "4d3a086a-5a96-42c4-ab5e-dfc4c7b3298a",
+      "name": "Wait 60s",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        2440,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "url": "=https://api.creatomate.com/v1/renders/{{ $json.id }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {}
+      },
+      "id": "1d00adb5-3618-4732-b8ae-0ab30fc90348",
+      "name": "Check Render Status",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2660,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "15a7333a-9cb7-45ab-a057-79087112cc58",
+              "leftValue": "={{ $json.status }}",
+              "rightValue": "succeeded",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "6042f429-9b2b-4540-b1b7-85af23f760a8",
+      "name": "Render Done?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        2880,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "f42f3dfa-2c53-4df6-8415-61a3fe07451f",
+              "leftValue": "={{ $json.status }}",
+              "rightValue": "failed",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "f3eb85fe-1a51-4cd5-b418-275ce94cc5a6",
+      "name": "Render Failed?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        2880,
+        220
+      ]
+    },
+    {
+      "parameters": {
+        "errorMessage": "=Creatomate render failed: {{ $json.error_message }}"
+      },
+      "id": "b161e04b-1123-4fa0-bd5b-0da868633000",
+      "name": "Stop: Render Failed",
+      "type": "n8n-nodes-base.stopAndError",
+      "typeVersion": 1,
+      "position": [
+        3100,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.url }}",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "file",
+              "outputPropertyName": "data"
+            }
+          }
+        }
+      },
+      "id": "b979175a-c762-4e06-aecc-c74bdb27b81e",
+      "name": "Download Final Video",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        3100,
+        -20
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "video",
+        "operation": "upload",
+        "title": "={{ $('Write Video Script').first().json.output.title }}",
+        "regionCode": "US",
+        "categoryId": "26",
+        "binaryProperty": "data",
+        "options": {
+          "description": "={{ $('Write Video Script').first().json.output.description }}\n\n{{ $('Write Video Script').first().json.output.hashtags }}",
+          "privacyStatus": "={{ $('Config').first().json.youtube_privacy }}",
+          "selfDeclaredMadeForKids": false,
+          "notifySubscribers": true
+        }
+      },
+      "id": "86db766f-8d22-4cab-a6ee-10bfb010ee08",
+      "name": "Upload to YouTube Shorts",
+      "type": "n8n-nodes-base.youTube",
+      "typeVersion": 1,
+      "position": [
+        3420,
+        -300
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "",
+          "mode": "list"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "",
+          "mode": "list"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Topic": "={{ $('Config').first().json.Topic }}",
+            "Status": "Posted",
+            "Title": "={{ $('Write Video Script').first().json.output.title }}",
+            "YouTube URL": "=https://youtube.com/shorts/{{ $json.id }}",
+            "Video URL": "={{ $('Check Render Status').first().json.url }}"
+          },
+          "matchingColumns": [
+            "Topic"
+          ],
+          "schema": [
+            {
+              "id": "Topic",
+              "displayName": "Topic",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Title",
+              "displayName": "Title",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "YouTube URL",
+              "displayName": "YouTube URL",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Video URL",
+              "displayName": "Video URL",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "d3923b6a-e9b9-4d40-967c-c2010a7f87db",
+      "name": "Mark Row as Posted",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        3660,
+        -300
+      ]
+    },
+    {
+      "parameters": {
+        "hostUrl": "graph-video.facebook.com",
+        "httpRequestMethod": "POST",
+        "graphApiVersion": "v23.0",
+        "node": "={{ $('Config').first().json.fb_page_id }}",
+        "edge": "videos",
+        "sendBinaryData": true,
+        "binaryPropertyName": "source:data",
+        "options": {
+          "queryParameters": {
+            "parameter": [
+              {
+                "name": "title",
+                "value": "={{ $('Write Video Script').first().json.output.title }}"
+              },
+              {
+                "name": "description",
+                "value": "={{ $('Write Video Script').first().json.output.title }}\n\n{{ $('Write Video Script').first().json.output.description }}\n\n{{ $('Write Video Script').first().json.output.hashtags }}"
+              }
+            ]
+          }
+        }
+      },
+      "id": "59ed0fd1-0942-4f49-93f4-f2e09d715efc",
+      "name": "Upload to Facebook Page",
+      "type": "n8n-nodes-base.facebookGraphApi",
+      "typeVersion": 1.1,
+      "position": [
+        3420,
+        -100
+      ]
+    },
+    {
+      "parameters": {
+        "httpRequestMethod": "POST",
+        "graphApiVersion": "v23.0",
+        "node": "={{ $('Config').first().json.ig_user_id }}",
+        "edge": "media",
+        "options": {
+          "queryParameters": {
+            "parameter": [
+              {
+                "name": "media_type",
+                "value": "REELS"
+              },
+              {
+                "name": "video_url",
+                "value": "={{ $('Check Render Status').first().json.url }}"
+              },
+              {
+                "name": "caption",
+                "value": "={{ $('Write Video Script').first().json.output.title }}\n\n{{ $('Write Video Script').first().json.output.description }}\n\n{{ $('Write Video Script').first().json.output.hashtags }}"
+              },
+              {
+                "name": "share_to_feed",
+                "value": "true"
+              }
+            ]
+          }
+        }
+      },
+      "id": "644876ec-2cf1-4499-a44c-351bc92e71d8",
+      "name": "Create Instagram Reel",
+      "type": "n8n-nodes-base.facebookGraphApi",
+      "typeVersion": 1.1,
+      "position": [
+        3420,
+        120
+      ]
+    },
+    {
+      "parameters": {
+        "amount": 30
+      },
+      "id": "1b048273-936e-4f0e-a57b-dec757021d0f",
+      "name": "Wait for Instagram",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        3640,
+        120
+      ]
+    },
+    {
+      "parameters": {
+        "graphApiVersion": "v23.0",
+        "node": "={{ $json.id }}",
+        "options": {
+          "fields": {
+            "field": [
+              {
+                "name": "status_code"
+              }
+            ]
+          }
+        }
+      },
+      "id": "47a6fd32-2e97-4713-804e-23d51eeb6947",
+      "name": "Check Reel Status",
+      "type": "n8n-nodes-base.facebookGraphApi",
+      "typeVersion": 1.1,
+      "position": [
+        3860,
+        120
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "3abb4409-c63e-4574-a5f0-0239c0712073",
+              "leftValue": "={{ $json.status_code }}",
+              "rightValue": "FINISHED",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "25ed87f3-a55a-4166-93a5-81ca228481fc",
+      "name": "Reel Ready?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        4080,
+        120
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "a53d76a3-b5bf-4410-9703-13315bd1e654",
+              "leftValue": "={{ $json.status_code }}",
+              "rightValue": "ERROR",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "8e1582c2-6af1-4563-a6aa-380ee1627c8a",
+      "name": "Reel Error?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        4080,
+        320
+      ]
+    },
+    {
+      "parameters": {
+        "errorMessage": "Instagram could not process the Reel (status_code = ERROR)"
+      },
+      "id": "ac906945-5b2b-48ec-b7c4-b0c26dc2a918",
+      "name": "Stop: Reel Failed",
+      "type": "n8n-nodes-base.stopAndError",
+      "typeVersion": 1,
+      "position": [
+        4300,
+        400
+      ]
+    },
+    {
+      "parameters": {
+        "httpRequestMethod": "POST",
+        "graphApiVersion": "v23.0",
+        "node": "={{ $('Config').first().json.ig_user_id }}",
+        "edge": "media_publish",
+        "options": {
+          "queryParameters": {
+            "parameter": [
+              {
+                "name": "creation_id",
+                "value": "={{ $json.id }}"
+              }
+            ]
+          }
+        }
+      },
+      "id": "afa27ec1-c866-4221-ae03-8c216dc800f3",
+      "name": "Publish Instagram Reel",
+      "type": "n8n-nodes-base.facebookGraphApi",
+      "typeVersion": 1.1,
+      "position": [
+        4300,
+        100
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// TikTok needs the exact file size in bytes.\nconst buffer = await this.helpers.getBinaryDataBuffer(0, 'data');\nreturn [{ json: { video_size: buffer.length } }];\n"
+      },
+      "id": "1c839e8d-84a7-4fb4-8b77-675e52895af4",
+      "name": "Get Video Size",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3420,
+        500
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://open.tiktokapis.com/v2/post/publish/video/init/",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "oAuth2Api",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({\n  post_info: {\n    title: ($('Write Video Script').first().json.output.title + ' ' + $('Write Video Script').first().json.output.hashtags).replace('#Shorts', '').slice(0, 2200),\n    privacy_level: $('Config').first().json.tiktok_privacy_level,\n    disable_duet: false,\n    disable_comment: false,\n    disable_stitch: false,\n    video_cover_timestamp_ms: 1000\n  },\n  source_info: {\n    source: 'FILE_UPLOAD',\n    video_size: $json.video_size,\n    chunk_size: $json.video_size,\n    total_chunk_count: 1\n  }\n}) }}",
+        "options": {}
+      },
+      "id": "511a8b09-1d95-409a-be08-511dbd2d12de",
+      "name": "TikTok: Init Upload",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        3640,
+        500
+      ]
+    },
+    {
+      "parameters": {
+        "url": "={{ $('Check Render Status').first().json.url }}",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "file",
+              "outputPropertyName": "data"
+            }
+          }
+        }
+      },
+      "id": "6ae5c71c-68d6-4cef-8ffc-01dcdc4d89c0",
+      "name": "TikTok: Fetch Video File",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        3860,
+        500
+      ]
+    },
+    {
+      "parameters": {
+        "method": "PUT",
+        "url": "={{ $('TikTok: Init Upload').first().json.data.upload_url }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "video/mp4"
+            },
+            {
+              "name": "Content-Range",
+              "value": "=bytes 0-{{ $('Get Video Size').first().json.video_size - 1 }}/{{ $('Get Video Size').first().json.video_size }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "binaryData",
+        "inputDataFieldName": "data",
+        "options": {}
+      },
+      "id": "eb308356-2cf9-4610-bb37-1fb448966d8e",
+      "name": "TikTok: Upload File",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        4080,
+        560
+      ]
+    },
+    {
+      "parameters": {
+        "inputDataFieldName": "data",
+        "name": "={{ $('Config').first().json.Topic }} - final.mp4",
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "={{ $('Create Drive Folder').first().json.id }}",
+          "mode": "id"
+        },
+        "options": {}
+      },
+      "id": "92509285-1f3d-4f16-9c4b-6ebcae158dd9",
+      "name": "Archive Final Video",
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        3420,
+        -500
+      ]
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Get Pending Topic",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Pending Topic": {
+      "main": [
+        [
+          {
+            "node": "Config",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Config": {
+      "main": [
+        [
+          {
+            "node": "Create Drive Folder",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Drive Folder": {
+      "main": [
+        [
+          {
+            "node": "Make Folder Public",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Make Folder Public": {
+      "main": [
+        [
+          {
+            "node": "Write Video Script",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Write Video Script",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Write Video Script",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Write Video Script": {
+      "main": [
+        [
+          {
+            "node": "Split Out Scenes",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out Scenes": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Scenes",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Scenes": {
+      "main": [
+        [
+          {
+            "node": "Collect Clip IDs",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Generate Clip (Veo 3)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Clip (Veo 3)": {
+      "main": [
+        [
+          {
+            "node": "Upload Clip to Drive",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upload Clip to Drive": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Scenes",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Collect Clip IDs": {
+      "main": [
+        [
+          {
+            "node": "Build 60s Timeline",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build 60s Timeline": {
+      "main": [
+        [
+          {
+            "node": "Render Video (Creatomate)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Render Video (Creatomate)": {
+      "main": [
+        [
+          {
+            "node": "Wait 60s",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait 60s": {
+      "main": [
+        [
+          {
+            "node": "Check Render Status",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Render Status": {
+      "main": [
+        [
+          {
+            "node": "Render Done?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Render Done?": {
+      "main": [
+        [
+          {
+            "node": "Download Final Video",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Render Failed?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Render Failed?": {
+      "main": [
+        [
+          {
+            "node": "Stop: Render Failed",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Wait 60s",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download Final Video": {
+      "main": [
+        [
+          {
+            "node": "Archive Final Video",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Upload to YouTube Shorts",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Upload to Facebook Page",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Create Instagram Reel",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Get Video Size",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upload to YouTube Shorts": {
+      "main": [
+        [
+          {
+            "node": "Mark Row as Posted",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Instagram Reel": {
+      "main": [
+        [
+          {
+            "node": "Wait for Instagram",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait for Instagram": {
+      "main": [
+        [
+          {
+            "node": "Check Reel Status",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Reel Status": {
+      "main": [
+        [
+          {
+            "node": "Reel Ready?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Reel Ready?": {
+      "main": [
+        [
+          {
+            "node": "Publish Instagram Reel",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Reel Error?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Reel Error?": {
+      "main": [
+        [
+          {
+            "node": "Stop: Reel Failed",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Wait for Instagram",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Video Size": {
+      "main": [
+        [
+          {
+            "node": "TikTok: Init Upload",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "TikTok: Init Upload": {
+      "main": [
+        [
+          {
+            "node": "TikTok: Fetch Video File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "TikTok: Fetch Video File": {
+      "main": [
+        [
+          {
+            "node": "TikTok: Upload File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "meta": {
+    "templateCredsSetupCompleted": false
+  },
+  "tags": []
+}

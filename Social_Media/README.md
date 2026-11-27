@@ -9,4 +9,4 @@
 - **monthly_social_media_report.json** – Uses Anthropic Claude, OpenAI Embeddings
 - **reddit_upvote_alert.json** – Uses Anthropic Claude, OpenAI Embeddings
 - **auto-reply_to_tiktok_comments.json** – Uses Anthropic Claude, Cohere Embeddings, Pinecone
-- **youtube_comment_summarizer.json** – Uses OpenAI Chat, OpenAI Embeddings, Pinecone
+- **youtube_comment_summarizer.json** – Uses OpenAI Chat, OpenAI Embeddings, Pinecone- **house_build_shorts_veo3_multiplatform.json** – Uses Google Veo 3 (Gemini node), Gemini Chat, Creatomate, YouTube, Facebook Graph API (Facebook + Instagram), TikTok API. See `house_build_shorts_veo3_SETUP.md`.
